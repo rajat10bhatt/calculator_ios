@@ -14,9 +14,11 @@ import Foundation
 
 class CalculatorBrain{
     private var accumulator = 0.0
+    private var internalProgram = [AnyObject]()
     
     func setOperand(operand: Double) {
         accumulator = operand
+        internalProgram.append(operand)
     }
     /* Using closures:-
      Step 1: Take function without its name
@@ -59,7 +61,8 @@ class CalculatorBrain{
         case Equals
     }
     
-    func peformOperation(symbol: String) {
+    func performOperation(symbol: String) {
+        internalProgram.append(symbol)
         if let operation = operations[symbol]{
             switch operation {
             case .Constant(let value):
@@ -87,6 +90,32 @@ class CalculatorBrain{
     private struct pendingOperation {
         var pendingOperation: (Double, Double) -> Double
         var firstOperand: Double
+    }
+    
+    typealias PropertyList = AnyObject
+    
+    var program: PropertyList {
+        get {
+            return internalProgram
+        }
+        set {
+            clear()
+            if let arrayofOps = newValue as? [AnyObject] {
+                for op in arrayofOps{
+                    if let operand = op as? Double {
+                        setOperand(operand)
+                    } else if let operation = op as? String {
+                        performOperation(operation)
+                    }
+                }
+            }
+        }
+    }
+    
+    func clear(){
+        accumulator = 0.0
+        pending = nil
+        internalProgram.removeAll()
     }
     
     var result: Double{
