@@ -20,6 +20,11 @@ class CalculatorBrain{
         accumulator = operand
         internalProgram.append(operand)
     }
+    
+    func addUnaryOperation(symbol: String, operation: (Double) -> Double) {
+        operations[symbol] = Operation.UnaryOperation(operation)
+    }
+    
     /* Using closures:-
      Step 1: Take function without its name
      (op1: Double, op2: Double) -> Double {
